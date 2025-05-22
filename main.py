@@ -16,3 +16,9 @@ def read_id(id: int):
         if id in item:
             return {"name": item[1], "age": item[2]}
     return {"message" : "Error"}
+
+@app.post("/")
+def post_item(id,name,age):
+    item = [id,name,age]
+    list.appind(item)
+    return {"message" : "Sccessfull"}
