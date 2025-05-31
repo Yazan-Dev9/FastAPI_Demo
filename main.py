@@ -1,49 +1,58 @@
-from fastapi import FastAPI
-from typing import Optional
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import Optional, List
+
 app = FastAPI()
 
-list =[
-[1,"yazan", 25]
+class Person(BaseModel):
+    id: int
+    name: str
+    age: int
+
+# Test data
+people_list: List[Person] = [
+    Person(id=1, name="yazan", age=25)
 ]
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello YAZAN from Railway!"}
+    return {"message": "Hello YAZAN ! (use fastapidemo.up.railway.app/docs link to control)"}
 
 @app.get("/all")
 def read_all():
-    result = []
-    for item in list:
-        dict = {"id": item[0],"name": item[1],"age": item[2]}
-        result.append(dict)
-    return result
+    return people_list
 
 @app.get("/{id}")
 def read_id(id: int):
-    for item in list:
-        if id in item:
-            return {"name": item[1], "age": item[2]}
-    return {"message" : "Error"}
+    for person in people_list:
+        if person.id == id:
+            return person
+    raise HTTPException(status_code=404, detail="Person not found")
 
 @app.post("/")
-def post_item(id: int ,name: str ,age: int):
-    item = [id,name,age]
-    list.append(item)
-    return {"message" : "Sccessfull"}
+def post_item(person: Person):
+    # Check id dons't exist in list
+    if any(p.id == person.id for p in people_list):
+        raise HTTPException(status_code=400, detail="ID already exists")
+    people_list.append(person)
+    return {"message": "Successful"}
 
 @app.delete("/{id}")
 def delete_item(id: int):
-    for item in list:
-        if id in item:
-            list.remove(item)
-            return {"message" : "Sccessfull"}
+    for i, person in enumerate(people_list):
+        if person.id == id:
+            del people_list[i]
+            return {"message": "Successful"}
+    raise HTTPException(status_code=404, detail="Person not found")
 
 @app.put("/{id}")
-def update_item(id: int,name: Optional[str] = None,age: Optional[int] = None):
-    for item in list:
-        if id in item:
-            if name:
-                item[1]=name
-            if age:
-                item[2]=age
-            return {"message" : "Sccessfull"}
+def update_item(id: int, name: Optional[str] = None, age: Optional[int] = None
+):
+    for person in people_list:
+        if person.id == id:
+            if name is not None:
+                person.name = name
+            if age is not None:
+                person.age = age
+            return {"message": "Successful"}
+    raise HTTPException(status_code=404, detail="Person not found")
