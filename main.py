@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 
-app = FastAPI("FastAPI_Demo")
+app = FastAPI(title="FastAPI_Demo")
 
 class Person(BaseModel):
     id: int
