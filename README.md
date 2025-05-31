@@ -19,15 +19,15 @@ This project is intended for learning and experimentation purposes.
 ## Requirements
 
 - Python 3.8+
-- fastapi
-- uvicorn
+- `fastapi`
+- `uvicorn`
+- `pydantic`
 
 Install requirements with:
 
 ``bash``
 ```
-pip install fastapi uvicorn
----
+pip install -r requirements.txt
 ```
 
 ## How to Run
